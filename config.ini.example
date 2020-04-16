@@ -1,0 +1,100 @@
+[global]
+; min log level [default = info]
+log_level = debug
+
+[ssdp_services]
+; configure the services advertised by the dummy device
+
+; part of the USN header
+uuid = 58d229f3-c6a8-f888-3f77-edfd55a7a3e0
+
+server_header = Linux/i686 UPnP/1.0 DLNADOC/1.50 Platinum/1.0.3.0
+
+; additional headers append to the end of the headers (separate the headers with '\r\n')
+; e.g. H1: data1\r\nH2: data2
+header_tail = DLNADeviceName.lge.com: [TV][LG]42LA690S-ZB
+
+#####################################################
+#### ADDITIONAL VARIABLES: set to their defaults ####
+#####################################################
+; [default = max-age=1800]
+# cache-control = max-age=1800
+
+[ssdp]
+; IP used as the source ip for unicast responses
+source_addr = 10.0.0.1
+
+; url to description XML (e.g. description.xml) on web server host
+location_header = http://192.168.1.23:5000/description.xml
+
+#####################################################
+#### ADDITIONAL VARIABLES: set to their defaults ####
+#####################################################
+; [default = 0.0.0.0]
+# listen_addr = 0.0.0.0
+
+; [default = upnp:rootdevice]
+# accept_st_header = upnp:rootdevice
+
+; the watchdog is logged with 'INFO' level
+; in minutes [default = 60]
+# watchdog_timeout = 60
+
+[web_server]
+;path to the services description file (realtive to the script or absolute)
+description_path = description.xml
+#####################################################
+#### ADDITIONAL VARIABLES: set to their defaults ####
+#####################################################
+; web server endpoint url (e.g. '/path/to/endpoint') [default = /description.xml]
+# listen_endpoint = /description.xml
+
+; [default = 0.0.0.0]
+# listen_addr = 0.0.0.0
+; [default = 5000]
+# listen_port = 5000
+
+; RESPONSE HEADERS
+; server header [no default]
+# server_header = Linux/i686 UPnP/1.0 DLNADOC/1.50 LGE_DLNA_SDK/04.28.17
+
+; additional headers append to the end of the headers (separate the headers with '\r\n')
+; e.g. H1: data1\r\nH2: data2
+; [no default]
+header_tail = DLNADeviceName.lge.com: [TV][LG]42LA690S-ZB
+
+[upnp]
+#####################################################
+#### ADDITIONAL VARIABLES: set to their defaults ####
+#####################################################
+; [default = 0.0.0.0]
+# listen_address = 0.0.0.0
+; [default = 1784]
+# listen_port = 1784
+
+; 32 * 1024 bytes [default = 32768]
+# listen_buffer = 32768
+
+; response type [no = no response, ok = 200 ok, slow_ok = slow 200 ok] [default = no]
+; TODO: slow_ok is not implemented yet
+# response = no
+
+; max connections per connection thread (should be 1) [default = 1]
+# max_connections = 1
+
+; the poll rate of active connection notification log [minutes] [default = 1]
+# active_conn_timeout = 1
+
+; server header [default = Linux/i686 UPnP/1.0 DLNADOC/1.50 LGE_DLNA_SDK/04.28.17]
+# server_header = Linux/i686 UPnP/1.0 DLNADOC/1.50 LGE_DLNA_SDK/04.28.17
+
+; timeout of the subscription in seconds [default = Second-1800]
+# timeout_header = Second-1800
+
+[sniffer]
+iface = eth0
+#####################################################
+#### ADDITIONAL VARIABLES: set to their defaults ####
+#####################################################
+; [default = 1784]
+# port = 1784
