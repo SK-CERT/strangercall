@@ -33,9 +33,6 @@ location_header = http://192.168.1.23:5000/description.xml
 ; [default = 0.0.0.0]
 # listen_addr = 0.0.0.0
 
-; [default = upnp:rootdevice]
-# accept_st_header = upnp:rootdevice
-
 ; the watchdog is logged with 'INFO' level
 ; in minutes [default = 60]
 # watchdog_timeout = 60

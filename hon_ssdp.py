@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #
 # SSDP socket listener on UDP/1900. After receiving a M-SEARCH request, it responses with 'HTTP 200 OK' message
-# responses only for ST: upnp:rootdevice
+# responses to any ST header with the same response
 #
 # usage:
 #    python3 hon_ssdp.py
@@ -30,7 +30,6 @@ _SSDP_LISTEN_BIND_STR = f'{_SSDP_LISTEN_ADDR}:{_SSDP_LISTEN_PORT}'
 _SSDP_SOURCE_ADDR = config.get('source_addr')
 # SSDP 'HTTP OK' response headers
 _SSDP_HEADER_LOCATION = config['location_header']
-_SSDP_HEADER_ST = config.get('accept_st_header', fallback='upnp:rootdevice')
 
 
 class DummySSDPListener:
@@ -61,7 +60,7 @@ class DummySSDPListener:
         raw_headers = '\r\n'.join([f'{k}:{v}' for k,v in headers.items() if not k.startswith('_')])
         data = (request_line + raw_headers).encode()
         log.info(f'FROM {headers["_address"]} {len(data)} bytes - {data}')
-        if ("M-SEARCH" in request_line and 'ST' in headers) and headers['ST'] == _SSDP_HEADER_ST:
+        if "M-SEARCH" in request_line and 'ST' in headers:
             await self.__on_msearch(headers)
 
     # Start listening for notifications
