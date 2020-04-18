@@ -56,7 +56,6 @@ class DummySSDPListener:
         return connect
 
     async def __on_request(self, request_line: str, headers: MutableMapping[str, str]):
-        # TODO: discuss the request condition
         raw_headers = '\r\n'.join([f'{k}:{v}' for k,v in headers.items() if not k.startswith('_')])
         data = (request_line + raw_headers).encode()
         log.info(f'FROM {headers["_address"]} {len(data)} bytes - {data}')
