@@ -28,7 +28,7 @@ _UPNP_SEND_BUFFER = config.getint('send_buffer', fallback=1)
 # max connection allowed per socket
 # FIXME: consider removing, should be constant ... chnage it to the max active connections???
 _UPNP_MAX_CONNECTIONS = config.getint('max_connections', fallback=1)
-_ACTIVE_CONNECTION_TIMEOUT = config.getint('active_conn_timeout', fallback=1) * 60  # converted to seconds
+_ACTIVE_CONNECTION_TIMEOUT = config.getint('active_conn_timeout', fallback=5)
 
 # RESPONSE related variables
 _UPNP_RESPONSE_TIMEOUT_HEADER = config.get('timeout_header', fallback='Second-180')
@@ -91,10 +91,13 @@ def resolve_tcp_connection(socket_fp, host):
 
 def counter():
     from time import sleep
+    active_connections = 0
 
     while True:
         __no_threads = len(threading.enumerate()) - 2
-        log.info(f'current active connections: {__no_threads}')
+        if __no_threads != active_connections:
+            log.info(f'current active connections: {__no_threads}')
+            active_connections = __no_threads
         sleep(_ACTIVE_CONNECTION_TIMEOUT)
 
 
