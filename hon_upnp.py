@@ -104,6 +104,7 @@ def counter():
 def main():
     # initialize socket listening on UDP/1900
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     sock.bind((_UPNP_LISTEN_ADDR, _UPNP_LISTEN_PORT))
     sock.listen(_UPNP_MAX_CONNECTIONS)
     if not sock:
