@@ -1,4 +1,4 @@
-# UPnP honeypot
+# StrangerCall
 
 a single purpose honeypot to bait threat actors exploiting **callstranger**
 
@@ -6,47 +6,41 @@ emulated device: **LG Smart TV** (by default)
 
 ## INSTALL (manual)
 1. `pip install -r requires.txt`
-2. rate limit the outbound UDP traffic with **iptables**: TODO: provide current rate limiting
-    ```bash
-    iptables -N SSDP_NOTIFY_RATE_LIMIT
-    
-    iptables -I OUTPUT -p udp -s <MY_IP> -j SSDP_NOTIFY_RATE_LIMIT
-    iptables -A SSDP_NOTIFY_RATE_LIMIT -m limit --limit 5/minute -j ACCEPT
-    iptables -A SSDP_NOTIFY_RATE_LIMIT -m limit --limit 10/hour -j ACCEPT
-    iptables -A SSDP_NOTIFY_RATE_LIMIT -j DROP
-    ```
-3. configure the honeypot in `config.ini` (rename or copy the default config from `config.ini.example`)
-4. edit the `eventSubURL` elements in `description.xml`
-
-## INSTALL (ansible)
-TODO: move ansible to repo and restructure the repo and 
+2. rate limit the inbound UDP traffic with **iptables**:
+    - view and optionally edit port numbers for UPNP honeypot
+    - run `bash rate_limit.sh`
+3. configure the honeypot in `honeypot/config.ini` (rename or copy the default config from [config example](honeypot/config.ini.example))
+4. inspect and rename the description XML [file]('description.xml.example') to `description.xml`
+5. inspect and edit the `eventSubURL` elements in the XML if necessary
+    - [if changed] don't forget the change the UPNP port in the configuration file 
 
 ## Structure
 ### hon_ssdp.py
 - UDP/1900 socket listener
-- replies to `M-SEARCH` requests
-- rate limits the outbound traffic
+- replies to `M-SEARCH` requests with arbitrary `ST` header
+- (TODO) rate limits the outbound traffic
 
 **USAGE**: `python3 hon_ssdp.py`
 
 ### hon_description_webserber.py
 - TCP/5000 HTTP server
-- returns the services description XML file 
+- returns the services description XML file
 
 **USAGE**: `python3 hon_description_webserver.py`
 
 ### hon_upnp.py 
-- TCP/5000 socket listener
+- TCP/1784 socket listener
 - accepts connections
 - receives SUBSCRIBE requests
+- optionally responses with standard HTTP 200 OK or doesn't (configurable)
 
 **USAGE**: `python3 hon_upnp.py`
 
 ### upnp_sniff.py
-- TCP/5000 request sniffer
-- logs the incoming requests
+- TCP/1784 sniffer
+- logs the inbound/outbound traffic
 
 **USAGE**: `python3 upnp_sniff.py`
 
 ### services.py
-- helper file to craft NOTIFY request bodies
+- helper file to craft NOTIFY request body
