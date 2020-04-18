@@ -2,11 +2,11 @@
 
 a single purpose honeypot to bait threat actors exploiting **callstranger**
 
-emulated device: **LG Smart TV**
+emulated device: **LG Smart TV** (by default)
 
-## INSTALL
+## INSTALL (manual)
 1. `pip install -r requires.txt`
-2. rate limit the outbound UDP traffic with **iptables**:
+2. rate limit the outbound UDP traffic with **iptables**: TODO: provide current rate limiting
     ```bash
     iptables -N SSDP_NOTIFY_RATE_LIMIT
     
@@ -15,8 +15,11 @@ emulated device: **LG Smart TV**
     iptables -A SSDP_NOTIFY_RATE_LIMIT -m limit --limit 10/hour -j ACCEPT
     iptables -A SSDP_NOTIFY_RATE_LIMIT -j DROP
     ```
-3. configure the honeypot in `config.ini`
+3. configure the honeypot in `config.ini` (rename or copy the default config from `config.ini.example`)
 4. edit the `eventSubURL` elements in `description.xml`
+
+## INSTALL (ansible)
+TODO: move ansible to repo and restructure the repo and 
 
 ## Structure
 ### hon_ssdp.py
