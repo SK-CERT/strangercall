@@ -14,7 +14,7 @@ from async_upnp_client.ssdp import SsdpProtocol
 from sys import stdout
 from typing import Any, Mapping, MutableMapping, Tuple, Callable, Awaitable
 
-from services import generate_ssdp_httpok_packets
+from .services import generate_ssdp_httpok_packets
 
 config_parser = configparser.ConfigParser()
 config_parser.read('config.ini')
