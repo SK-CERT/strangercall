@@ -65,7 +65,7 @@ header_tail = DLNADeviceName.lge.com: [TV][LG]42LA690S-ZB
 #### ADDITIONAL VARIABLES: set to their defaults ####
 #####################################################
 ; [default = 0.0.0.0]
-# listen_address = 0.0.0.0
+# listen_addr = 0.0.0.0
 ; [default = 1784]
 # listen_port = 1784
 

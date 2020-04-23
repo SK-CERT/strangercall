@@ -75,7 +75,7 @@ def response(socket: socket.socket, host):
 
 
 # receive messages until socket is open
-# notify when dosconnected
+# notify when disconnected
 def resolve_tcp_connection(socket_fp, host):
     __msg = b'start'
 
