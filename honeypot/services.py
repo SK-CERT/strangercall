@@ -8,19 +8,15 @@ from tzlocal import get_localzone
 
 config_parser = configparser.ConfigParser()
 config_parser.read('config.ini')
-# TODO: change to 'services' both here and in config example
-config = config_parser['ssdp_services']
+config = config_parser['services']
 
 _UUID = config.get('uuid')
-# FIXME: rename the config variable to 'ssdp_server_header'
-_SSDP_SERVER = config.get('server_header')
-# TODO: move to cofiguration file
-_UPNP_SERVER = 'Linux/i686 UPnP/1.0 DLNADOC/1.50 LGE_DLNA_SDK/04.28.17'
+_SSDP_SERVER = config.get('ssdp_server_header')
+_UPNP_SERVER = config.get('upnp_server_header')
 _CACHE_CONTROL = config.get('cache-control_header', fallback='max-age=1800')
 _ADDITIONAL_HEADERS_LIST = config.get('header_tail', fallback='')
 
-# TODO: uncomment and change in config example
-# _SERVICES_DESCRIPTION_PATH = config.get('description_path')
+_SERVICES_DESCRIPTION_PATH = config.get('description_path')
 
 __advertised_service = {
     "Cache-Control": _CACHE_CONTROL,
@@ -56,8 +52,7 @@ if _ADDITIONAL_HEADERS_LIST != '':
     __description_response = '\r\n' + _ADDITIONAL_HEADERS_LIST
 
 
-def generate_description_xml_response(desc_path) -> bytes:
-    # TODO: change to constant _SERVICES_DESCRIPTION_PATH
-    with open(desc_path, 'rb') as fp:
+def generate_description_xml_response() -> bytes:
+    with open(_SERVICES_DESCRIPTION_PATH, 'rb') as fp:
         data = fp.read()
         return (__description_response + '\r\n\r\n').format(length=len(data)).encode() + data

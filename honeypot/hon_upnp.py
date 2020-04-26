@@ -30,13 +30,11 @@ _UPNP_MAX_CONNECTIONS = config.getint('max_connections', fallback=1)
 _ACTIVE_CONNECTION_TIMEOUT = config.getint('active_conn_timeout', fallback=5)
 
 # description xml listen endpoint
-_SERVICES_DESCRIPTION_PATH = config.get('description_path')
 _ENDPOINT_URL = config.get('listen_description_endpoint', fallback='/description.xml')
 
 # RESPONSE related variables
 _UPNP_RESPONSE_TIMEOUT_HEADER = config.get('timeout_header', fallback='Second-180')
-_UPNP_RESPONSE_SERVER_HEADER = config.get('server_header',
-                                          fallback='Linux/i686 UPnP/1.0 DLNADOC/1.50 LGE_DLNA_SDK/04.28.17')
+_UPNP_RESPONSE_SERVER_HEADER = config_parser['services'].get('upnp_server_header')
 # UPNP SUBSCRIBE response behavior [no = no response, ok = 200 ok, slow_ok = slow 200 ok]
 _SUBSCRIBE_RESPONSE_BEHAVIOR = config.get('response', fallback='no')
 __ALLOWED_RESPONSE_BEHAVIORS = ['no', 'ok', 'slow_ok']
@@ -83,7 +81,7 @@ def response(socket: socket.socket, host):
 
 def response_description_xml(socket: socket.socket, host):
     try:
-        data = generate_description_xml_response(_SERVICES_DESCRIPTION_PATH)
+        data = generate_description_xml_response()
         socket.send(data)
         log.debug(f'[data to] {host} xml description bytes data')
     except FileNotFoundError as e:
