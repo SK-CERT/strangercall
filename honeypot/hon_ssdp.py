@@ -4,7 +4,7 @@
 # responses to any ST header with the same response
 #
 # usage:
-#    python3 hon_ssdp.py
+#    python3 honeypot/hon_ssdp.py
 
 import asyncio
 import configparser
@@ -14,7 +14,7 @@ from async_upnp_client.ssdp import SsdpProtocol
 from sys import stdout
 from typing import Any, Mapping, MutableMapping, Tuple, Callable, Awaitable
 
-from .services import generate_ssdp_httpok_packets
+from honeypot.services import generate_ssdp_httpok_packets
 
 config_parser = configparser.ConfigParser()
 config_parser.read('config.ini')
@@ -101,7 +101,7 @@ async def async_httpok(location, source_ip: str, target: Tuple[str, int]):
 async def main():
     # callable for received M-SEARCH
     async def on_msearch(data: Mapping[str, Any]):
-        log.debug(f'received valid M-SEARCH responsing with HTTP 200 OK')
+        log.debug(f'received valid M-SEARCH responsing with HTTP 200 OK; {data}')
         await async_httpok(location=_SSDP_HEADER_LOCATION,
                            source_ip=_SSDP_SOURCE_ADDR,
                            target=(data['_address'].split(':')[0], int(data['_address'].split(':')[1])))

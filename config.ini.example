@@ -2,6 +2,9 @@
 ; min log level [default = info]
 log_level = debug
 
+########################
+###     SERVICES     ###
+########################
 [ssdp_services]
 ; configure the services advertised by the dummy device
 
@@ -14,12 +17,13 @@ server_header = Linux/i686 UPnP/1.0 DLNADOC/1.50 Platinum/1.0.3.0
 ; e.g. H1: data1\r\nH2: data2
 header_tail = DLNADeviceName.lge.com: [TV][LG]42LA690S-ZB
 
-#####################################################
 #### ADDITIONAL VARIABLES: set to their defaults ####
-#####################################################
 ; [default = max-age=1800]
 # cache-control = max-age=1800
 
+########################
+###       SSDP       ###
+########################
 [ssdp]
 ; IP used as the source ip for unicast responses
 source_addr = 10.0.0.1
@@ -27,9 +31,7 @@ source_addr = 10.0.0.1
 ; url to description XML (e.g. description.xml) on web server host
 location_header = http://192.168.1.23:5000/description.xml
 
-#####################################################
 #### ADDITIONAL VARIABLES: set to their defaults ####
-#####################################################
 ; [default = 0.0.0.0]
 # listen_addr = 0.0.0.0
 
@@ -37,12 +39,13 @@ location_header = http://192.168.1.23:5000/description.xml
 ; in minutes [default = 60]
 # watchdog_timeout = 60
 
+########################
+###    WEB SERVER    ###
+########################
 [web_server]
 ;path to the services description file (realtive to the script or absolute)
-description_path = description.xml
-#####################################################
+description_path = description.xml.example
 #### ADDITIONAL VARIABLES: set to their defaults ####
-#####################################################
 ; web server endpoint url (e.g. '/path/to/endpoint') [default = /description.xml]
 # listen_endpoint = /description.xml
 
@@ -57,13 +60,16 @@ description_path = description.xml
 
 ; additional headers append to the end of the headers (separate the headers with '\r\n')
 ; e.g. H1: data1\r\nH2: data2
-; [no default]
+; [default = '']
 header_tail = DLNADeviceName.lge.com: [TV][LG]42LA690S-ZB
 
+########################
+###       UPNP       ###
+########################
 [upnp]
-#####################################################
+;path to the services description file (realtive to the script or absolute)
+description_path = description.xml.example
 #### ADDITIONAL VARIABLES: set to their defaults ####
-#####################################################
 ; [default = 0.0.0.0]
 # listen_addr = 0.0.0.0
 ; [default = 1784]
@@ -71,6 +77,9 @@ header_tail = DLNADeviceName.lge.com: [TV][LG]42LA690S-ZB
 
 ; 32 * 1024 bytes [default = 32768]
 # listen_buffer = 32768
+
+; web server endpoint url (e.g. '/path/to/endpoint') [default = /description.xml]
+# listen_description_endpoint = /description.xml
 
 ; response type [no = no response, ok = 200 ok, slow_ok = slow 200 ok] [default = no]
 ; TODO: slow_ok is not implemented yet
@@ -88,10 +97,11 @@ header_tail = DLNADeviceName.lge.com: [TV][LG]42LA690S-ZB
 ; timeout of the subscription in seconds [default = Second-1800]
 # timeout_header = Second-1800
 
+########################
+###     SNIFFER      ###
+########################
 [sniffer]
 iface = eth0
-#####################################################
 #### ADDITIONAL VARIABLES: set to their defaults ####
-#####################################################
 ; [default = 1784]
 # port = 1784

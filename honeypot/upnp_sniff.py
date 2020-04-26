@@ -4,7 +4,7 @@
 # log message format: "FROM ip:port TO ip:port UTF-8 headers"
 #
 # usage:
-#    python3 upnp_sniff.py
+#    python3 honeypot/upnp_sniff.py
 
 import configparser
 import logging
