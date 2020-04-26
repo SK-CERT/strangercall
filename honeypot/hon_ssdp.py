@@ -2,9 +2,6 @@
 #
 # SSDP socket listener on UDP/1900. After receiving a M-SEARCH request, it responses with 'HTTP 200 OK' message
 # responses to any ST header with the same response
-#
-# usage:
-#    python3 hon_ssdp.py
 
 import asyncio
 import configparser
@@ -14,7 +11,7 @@ from async_upnp_client.ssdp import SsdpProtocol
 from sys import stdout
 from typing import Any, Mapping, MutableMapping, Tuple, Callable, Awaitable
 
-from .services import generate_ssdp_httpok_packets
+from honeypot.services import generate_ssdp_httpok_packets
 
 config_parser = configparser.ConfigParser()
 config_parser.read('config.ini')
@@ -30,6 +27,8 @@ _SSDP_LISTEN_BIND_STR = f'{_SSDP_LISTEN_ADDR}:{_SSDP_LISTEN_PORT}'
 _SSDP_SOURCE_ADDR = config.get('source_addr')
 # SSDP 'HTTP OK' response headers
 _SSDP_HEADER_LOCATION = config['location_header']
+
+log = logging.getLogger('hon_ssdp')
 
 
 class DummySSDPListener:
@@ -98,10 +97,10 @@ async def async_httpok(location, source_ip: str, target: Tuple[str, int]):
     _transport.close()
 
 
-async def main():
+async def main_loop():
     # callable for received M-SEARCH
     async def on_msearch(data: Mapping[str, Any]):
-        log.debug(f'received valid M-SEARCH responsing with HTTP 200 OK')
+        log.debug(f'received valid M-SEARCH responsing with HTTP 200 OK; {data}')
         await async_httpok(location=_SSDP_HEADER_LOCATION,
                            source_ip=_SSDP_SOURCE_ADDR,
                            target=(data['_address'].split(':')[0], int(data['_address'].split(':')[1])))
@@ -119,9 +118,8 @@ async def main():
         raise
 
 
-if __name__ == '__main__':
+def main():
     # intialize logger
-    log = logging.getLogger('hon_ssdp')
     log.setLevel(_LOG_LEVEL)
     formatter = logging.Formatter('%(asctime)-15s %(name)s %(levelname)-8s %(message)s')
     handler = logging.StreamHandler(stream=stdout)
@@ -130,4 +128,8 @@ if __name__ == '__main__':
 
     loop = asyncio.get_event_loop()
     log.info(f'Started SSDP listener on {_SSDP_LISTEN_BIND_STR}')
-    loop.run_until_complete(main())
+    loop.run_until_complete(main_loop())
+
+
+if __name__ == '__main__':
+    main()

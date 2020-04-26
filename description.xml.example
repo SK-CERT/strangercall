@@ -28,21 +28,21 @@
         <serviceId>urn:upnp-org:serviceId:ConnectionManager</serviceId>
         <SCPDURL>/ConnectionManager/58d229f3-c6a8-f888-3f77-edfd55a7a3e0/scpd.xml</SCPDURL>
         <controlURL>/ConnectionManager/58d229f3-c6a8-f888-3f77-edfd55a7a3e0/control.xml</controlURL>
-        <eventSubURL>http://192.168.1.23:1784/subscribe/ConnectionManager</eventSubURL>
+        <eventSubURL>/ConnectionManager/58d229f3-c6a8-f888-3f77-edfd55a7a3e0/event.xml</eventSubURL>
       </service>
       <service>
         <serviceType>urn:schemas-upnp-org:service:RenderingControl:1</serviceType>
         <serviceId>urn:upnp-org:serviceId:RenderingControl</serviceId>
         <SCPDURL>/RenderingControl/58d229f3-c6a8-f888-3f77-edfd55a7a3e0/scpd.xml</SCPDURL>
         <controlURL>/RenderingControl/58d229f3-c6a8-f888-3f77-edfd55a7a3e0/control.xml</controlURL>
-        <eventSubURL>http://192.168.1.23:1784/subscribe/RenderingControl</eventSubURL>
+        <eventSubURL>/RenderingControl/58d229f3-c6a8-f888-3f77-edfd55a7a3e0/event.xml</eventSubURL>
       </service>
       <service>
         <serviceType>urn:schemas-upnp-org:service:AVTransport:1</serviceType>
         <serviceId>urn:upnp-org:serviceId:AVTransport</serviceId>
         <SCPDURL>/AVTransport/58d229f3-c6a8-f888-3f77-edfd55a7a3e0/scpd.xml</SCPDURL>
         <controlURL>/AVTransport/58d229f3-c6a8-f888-3f77-edfd55a7a3e0/control.xml</controlURL>
-        <eventSubURL>http://192.168.1.23:1784/subscribe/AVTransport</eventSubURL>
+        <eventSubURL>/AVTransport/58d229f3-c6a8-f888-3f77-edfd55a7a3e0/event.xml</eventSubURL>
       </service>
     </serviceList>
   </device>

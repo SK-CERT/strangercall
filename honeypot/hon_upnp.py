@@ -2,9 +2,6 @@
 #
 # single purpose TCP server accepting connections and receiving UPnP requests
 # NOTE: connections can be closed only from the client, thus this 'server' keeps all connections active
-#
-# usage:
-#    python3 hon_upnp.py
 
 import configparser
 import logging
@@ -13,6 +10,8 @@ import threading
 from datetime import datetime
 from sys import stdout
 from tzlocal import get_localzone
+
+from honeypot.services import generate_description_xml_response
 
 config_parser = configparser.ConfigParser()
 config_parser.read('config.ini')
@@ -30,10 +29,12 @@ _UPNP_SEND_BUFFER = config.getint('send_buffer', fallback=1)
 _UPNP_MAX_CONNECTIONS = config.getint('max_connections', fallback=1)
 _ACTIVE_CONNECTION_TIMEOUT = config.getint('active_conn_timeout', fallback=5)
 
+# description xml listen endpoint
+_ENDPOINT_URL = config.get('listen_description_endpoint', fallback='/description.xml')
+
 # RESPONSE related variables
 _UPNP_RESPONSE_TIMEOUT_HEADER = config.get('timeout_header', fallback='Second-180')
-_UPNP_RESPONSE_SERVER_HEADER = config.get('server_header',
-                                          fallback='Linux/i686 UPnP/1.0 DLNADOC/1.50 LGE_DLNA_SDK/04.28.17')
+_UPNP_RESPONSE_SERVER_HEADER = config_parser['services'].get('upnp_server_header')
 # UPNP SUBSCRIBE response behavior [no = no response, ok = 200 ok, slow_ok = slow 200 ok]
 _SUBSCRIBE_RESPONSE_BEHAVIOR = config.get('response', fallback='no')
 __ALLOWED_RESPONSE_BEHAVIORS = ['no', 'ok', 'slow_ok']
@@ -45,6 +46,9 @@ _RESPONSE_HEADERS = "HTTP/1.1 200 OK\r\n" + \
                     "CONTENT-LENGTH: {length}\r\n" + \
                     "TIMEOUT: {timeout}\r\n" + \
                     "\r\n"
+
+_DESCRIPTION_REQUEST_LINE = f"GET {_ENDPOINT_URL} HTTP/1.1"
+_SUBSCRIBE_REQUEST_LINE = "SUBSCRIBE"
 
 # intialize logger
 log = logging.getLogger('hon_upnp')
@@ -65,6 +69,7 @@ def response(socket: socket.socket, host):
     if _SUBSCRIBE_RESPONSE_BEHAVIOR == 'no':
         return
     elif _SUBSCRIBE_RESPONSE_BEHAVIOR in ['ok', 'slow_ok']:
+        # TODO: move response generation to services.py
         date_header = datetime.now().astimezone(get_localzone()).strftime(__date_format)
         data = _RESPONSE_HEADERS.format(date=date_header,
                                         server=_UPNP_RESPONSE_SERVER_HEADER,
@@ -72,6 +77,15 @@ def response(socket: socket.socket, host):
                                         timeout=_UPNP_RESPONSE_TIMEOUT_HEADER).encode()
         socket.sendto(data, host)
         log.debug(f'[data to] {host} {data}')
+
+
+def response_description_xml(socket: socket.socket, host):
+    try:
+        data = generate_description_xml_response()
+        socket.send(data)
+        log.debug(f'[data to] {host} xml description bytes data')
+    except FileNotFoundError as e:
+        log.error(e)
 
 
 # receive messages until socket is open
@@ -83,7 +97,9 @@ def resolve_tcp_connection(socket_fp, host):
     while __msg != b'':
         __msg = socket_fp.recv(_UPNP_LISTEN_BUFFER)
         log.debug(f'[data from] {host} {__msg}')
-        if 'SUBSCRIBE' in __msg.decode('utf-8'):
+        if __msg.decode('utf-8').startswith(_DESCRIPTION_REQUEST_LINE):
+            response_description_xml(socket_fp, host)
+        elif __msg.decode('utf-8').startswith(_SUBSCRIBE_REQUEST_LINE):
             response(socket_fp, host)
 
     log.info(f'[-] {host} DISCONNECTED')
