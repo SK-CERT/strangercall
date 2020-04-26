@@ -2,9 +2,6 @@
 #
 # simple scapy-based sniffer for TCP UPnP requests
 # log message format: "FROM ip:port TO ip:port UTF-8 headers"
-#
-# usage:
-#    python3 honeypot/upnp_sniff.py
 
 import configparser
 import logging
@@ -42,6 +39,7 @@ def inspect_packet(pkt: Ether):
 
 
 def main():
+    log.info(f'Started UPnP sniffer filter: "{_SNIFFER_FILTER}" on {_SNIFFER_IFACE}')
     # starts an infinite sniffer loop with the following properties
     #   the IP packets are deframented on-the-flow
     #   sniffer is filtered for the specified TCP/5000 and for scapy dependent filer to contain the Raw layer (DATA)
@@ -55,5 +53,4 @@ def main():
 
 
 if __name__ == '__main__':
-    log.info(f'Started UPnP sniffer filter: "{_SNIFFER_FILTER}" on {_SNIFFER_IFACE}')
     main()

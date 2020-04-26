@@ -2,9 +2,6 @@
 #
 # single purpose TCP server accepting connections and receiving UPnP requests
 # NOTE: connections can be closed only from the client, thus this 'server' keeps all connections active
-#
-# usage:
-#    python3 honeypot/hon_upnp.py
 
 import configparser
 import logging
