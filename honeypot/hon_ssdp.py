@@ -29,6 +29,7 @@ _SSDP_LISTEN_BIND_STR = f'{_SSDP_LISTEN_ADDR}:{_SSDP_LISTEN_PORT}'
 _SSDP_SOURCE_ADDR = config.get('source_addr')
 # SSDP 'HTTP OK' response headers
 _SSDP_HEADER_LOCATION = config['location_header']
+_SSDP_RATELIMIT_ENABLED = config.getboolean('enable_ratelimit', fallback=True)
 _SSDP_SECOND_RATELIMIT = config.getint('ratelimit_second', fallback=1)
 _SSDP_MINUTE_RATELIMIT = config.getint('ratelimit_minute', fallback=5)
 _SSDP_HOUR_RATELIMIT = config.getint('ratelimit_hour', fallback=10)
@@ -124,13 +125,14 @@ class DummySSDPListener:
         return connect
 
     async def __on_request(self, request_line: str, headers: MutableMapping[str, str]):
-        _increment_ratelimit_counters(headers['_address'].split(':')[0])
+        if _SSDP_RATELIMIT_ENABLED:
+            _increment_ratelimit_counters(headers['_address'].split(':')[0])
         raw_headers = '\r\n'.join([f'{k}:{v}' for k, v in headers.items() if not k.startswith('_')])
         data = (request_line + raw_headers).encode()
         log.info(f'FROM {headers["_address"]} {len(data)} bytes - {data}')
-        if "M-SEARCH" in request_line and \
-                'ST' in headers and \
-                ok_to_send(headers['_address'].split(':')[0]):
+        if "M-SEARCH" in request_line and 'ST' in headers:
+            if _SSDP_RATELIMIT_ENABLED and not ok_to_send(headers['_address'].split(':')[0]):
+                return
             await self.__on_msearch(headers)
 
     # Start listening for notifications
@@ -202,8 +204,10 @@ def main():
     handler.setFormatter(formatter)
     log.addHandler(handler)
 
-    ratelimit_cleanup_thread = Thread(target=_ratelimit_cleanup, daemon=True)
-    ratelimit_cleanup_thread.start()
+    if _SSDP_RATELIMIT_ENABLED:
+        ratelimit_cleanup_thread = Thread(target=_ratelimit_cleanup, daemon=True)
+        ratelimit_cleanup_thread.start()
+        log.debug(f'started rate limiting cleanup thread')
 
     loop = asyncio.get_event_loop()
     log.info(f'Started SSDP listener on {_SSDP_LISTEN_BIND_STR}')

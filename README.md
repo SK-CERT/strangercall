@@ -21,6 +21,7 @@ emulated device: **LG Smart TV** (by default)
 - replies to `M-SEARCH` requests with arbitrary `ST` header
 - to evade possible SSDP DoS amplification on the running SSDP it rate limits the inbound requests per threat actor IP address
     - by defulat allows **1/sec**, **5/min**, **10/hour**
+    - **rate limiting is optional, but ENABLED by default**
 
 **USAGE**: `hon_ssdp`
 

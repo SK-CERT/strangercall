@@ -43,7 +43,8 @@ location_header = http://192.168.1.23:5000/description.xml
 ; in minutes [default = 60]
 # watchdog_timeout = 60
 
-; ratelimitig settings
+; ratelimitig settings [default = true]
+# enable_ratelimit = true
 ; possible variables set number of requests per second[default = 1] / minute [default = 5] / hour [default = 10]
 # ratelimit_second = 1
 # ratelimit_minute = 5
