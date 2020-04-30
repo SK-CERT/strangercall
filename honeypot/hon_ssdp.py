@@ -207,7 +207,7 @@ def main():
     if _SSDP_RATELIMIT_ENABLED:
         ratelimit_cleanup_thread = Thread(target=_ratelimit_cleanup, daemon=True)
         ratelimit_cleanup_thread.start()
-        log.debug(f'started rate limiting cleanup thread')
+        log.info(f'started rate limiting cleanup thread')
 
     loop = asyncio.get_event_loop()
     log.info(f'Started SSDP listener on {_SSDP_LISTEN_BIND_STR}')
