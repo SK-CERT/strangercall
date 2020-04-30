@@ -5,7 +5,7 @@ a single purpose honeypot to bait threat actors exploiting **callstranger**
 emulated device: **LG Smart TV** (by default)
 
 ## INSTALL (manual)
-1. rate limit the inbound UDP traffic with **iptables**:
+1. (optional) rate limit the inbound UDP traffic with **iptables**:
     - view and optionally edit port numbers for UPNP honeypot
     - run `bash rate_limit.sh`
 2. configure the honeypot in `config.ini` (rename or copy the default config from [config example](config.ini.example))
@@ -19,7 +19,8 @@ emulated device: **LG Smart TV** (by default)
 ### hon_ssdp.py
 - UDP/1900 socket listener
 - replies to `M-SEARCH` requests with arbitrary `ST` header
-- (TODO) rate limits the outbound traffic
+- to evade possible SSDP DoS amplification on the running SSDP it rate limits the inbound requests per threat actor IP address
+    - by defulat allows **1/sec**, **5/min**, **10/hour**
 
 **USAGE**: `hon_ssdp`
 
